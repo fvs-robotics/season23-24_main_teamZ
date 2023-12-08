@@ -8,6 +8,7 @@ CompetitionState = input('Please enter the competition state. Please enter eithe
 SECONDS = "SECONDS"
 MSEC = "MSEC"
 
+
 class Competition():
     def __init__(self, driver_control, autonomous):
         if CompetitionState == "driver_control":
@@ -17,6 +18,7 @@ class Competition():
         else:
             print("Unknown Competition State")
             sys.exit(1)
+
 
 class FontType():
     @staticmethod
@@ -59,6 +61,7 @@ class FontType():
     def PROP60():
         pass
 
+
 class Color():
     @staticmethod
     def BLACK():
@@ -99,6 +102,7 @@ class Color():
     @staticmethod
     def TRANSPARENT():
         pass
+
 
 class brain():
     class screen():
@@ -201,7 +205,7 @@ class brain():
     class timer():
         @staticmethod
         def event(callback, timee):
-            time.sleep(timee*1000)
+            time.sleep(timee * 1000)
             callback()
 
         @staticmethod
@@ -228,6 +232,7 @@ class brain():
         @staticmethod
         def wait(timee):
             time.sleep(timee)
+
 
 def print(text):
     if text == r"\033[2J":

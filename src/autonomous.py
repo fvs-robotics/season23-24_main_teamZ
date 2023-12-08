@@ -6,6 +6,7 @@ import time
 # F = associated callback function, S = signal required to run function (clicked, pressed, etc)
 objectsXYWHSF = []
 
+
 class V5GLError(Exception):
     def __init__(self, message="Sorry, V5GL encountered an internal error."):
         self.message = message
@@ -42,7 +43,8 @@ class V5Application:
                 self.lastPressY = self.pressY
 
                 for object in objectsXY:
-                    if self.pressX <= object[0] + object[2] and self.pressX >= object[0] and self.pressY <= object[1] + object[3] and self.pressY >= object[1]:
+                    if self.pressX <= object[0] + object[2] and self.pressX >= object[0] and self.pressY <= object[1] + \
+                            object[3] and self.pressY >= object[1]:
                         object[4]()
 
             # If the loop is running at a faster rate than the screen refresh rate, then wait until the next screen refresh
@@ -73,7 +75,5 @@ class V5Application:
         return self.refreshRate
 
     def GetObjectsXY(self):
+
         return objectsXY
-
-
-

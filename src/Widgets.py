@@ -1,5 +1,6 @@
 from vex import *
 
+
 # image is a list of lists of the average RGB values of each pixel in each column in the image
 def BoxBlur(image, radius):
     # Blurs a greyscale image using a box filter.
@@ -31,7 +32,6 @@ def BoxBlur(image, radius):
                     bn += 1
             img.set_pixel(x, y, Color(r / rn, g / gn, b / bn))
     return img
-
 
 
 def draw_rect(xCoordinate, yCoordinate, width, height, borderRadius):
