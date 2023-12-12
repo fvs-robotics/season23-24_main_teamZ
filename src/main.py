@@ -13,9 +13,9 @@ mLB = vex.Motor(vex.Ports.PORT3, vex.GearSetting.RATIO18_1, True)  # Left back m
 mRB = vex.Motor(vex.Ports.PORT4, vex.GearSetting.RATIO18_1, True)  # Right back motor
 armL = vex.Motor(vex.Ports.PORT5, vex.GearSetting.RATIO36_1, True)  # Left arm motor
 armR = vex.Motor(vex.Ports.PORT6, vex.GearSetting.RATIO36_1, True)  # Right arm motor
-inertial1 = vex.Inertial(vex.Ports.PORT7)  # Inertial sensor
 intake = vex.Motor(vex.Ports.PORT8, vex.GearSetting.RATIO18_1, True)  # Intake motor
 controller1 = vex.Controller(vex.Ports.PORT9, vex.ControllerType.PRIMARY, True)  # Primary controller
+inertia_center = vex.Inertial(vex.Ports.PORT21)  # Inertial sensor
 # endregion config
 
 
@@ -43,20 +43,47 @@ def drivercontrol():
 
         intake.spin(reverse, 100, percent)
 
-        # Place holder code, check motor port and direction!!
+        """
+        Temperature return:
+        Every movement will return the temperature of the motor on the brain screen.
+        """
+        tempArmL = armL.temperature(CELCIUS)
+        tempArmR = armR.temperature(CELCIUS)
+        brain.screen.clear_screen()
+        brain.screen.print_(tempArmL, TRUE)
+        brain.screen.print_(tempArmR, TRUE)
+
+        """
+        Controller Axis 1 and Axis 3:
+        The left front motor and left back motor spin forward when pushing the left joystick forward.
+        Then, the left front motor and left back motor spin backward when pushing the left joystick backward.
+        """
         mLF.spin(FWD, controller1.axis3.value() + controller1.axis1.value(), PCT)
         mLB.spin(FWD, controller1.axis3.value() + controller1.axis1.value(), PCT)
         mRF.spin(FWD, controller1.axis3.value() - controller1.axis1.value(), PCT)
         mRB.spin(FWD, controller1.axis3.value() - controller1.axis1.value(), PCT)
 
-        if controller1.ButtonL1.pressing():
-            armL.spin(FWD, 100, PCT)
-            armR.spin(FWD, 100, PCT)
+        """
+        R1 and R2 buttons:
+        The right arm motor and left arm motor lift up the arms at once when pressing the R1 button.
+        Then, the right arm motor and left arm motor lift down the arms at once when pressing the R2 button.
+        
+        For reference, in vex.Motor class:
+        def vex.Motor.spin_for_time	(self,
+                                    direction,
+                                    time,
+                                    timeUnits = TimeUnits.SEC,
+                                    velocity = None,
+                                    velocityUnits = VelocityUnits.PCT
+                                    )
+        """
 
-        if controller1.ButtonL2.pressing():
-            armL.spin(REV, 100, PCT)
-            armR.spin(REV, 100, PCT)
-
+        if controller1.ButtonR1.pressing():
+            armL.spin_for_time(FWD, 300, MSEC, 100, PCT)
+            armR.spin_for_time(FWD, 300, MSEC, 100, PCT)
+        if controller1.ButtonR2.pressing():
+            armL.spin_for_time(REV, 300, MSEC, 100, PCT)
+            armR.spin_for_time(REV, 300, MSEC, 100, PCT)
         else:
             armL.stop(hold)
             armR.stop(hold)

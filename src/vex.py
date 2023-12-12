@@ -20,6 +20,17 @@ class Competition():
             sys.exit(1)
 
 
+class Motor():
+
+    def spin_for_time(self,
+                      direction,
+                      time,
+                      timeUnis=TimeUnits.SEC,
+                      velociy=None,
+                      velocityUnis=VelocityUnits.PCT
+                      )
+
+
 class FontType():
     @staticmethod
     def MONO12():
