@@ -8,11 +8,11 @@ import smartdrive
 # region config
 brain = vex.Brain()
 mLF = vex.Motor(vex.Ports.PORT1, vex.GearSetting.RATIO18_1, True)  # Left front motor
-mRF = vex.Motor(vex.Ports.PORT2, vex.GearSetting.RATIO18_1, True)  # Right front motor
-mLB = vex.Motor(vex.Ports.PORT3, vex.GearSetting.RATIO18_1, True)  # Left back motor
-mRB = vex.Motor(vex.Ports.PORT4, vex.GearSetting.RATIO18_1, True)  # Right back motor
-armL = vex.Motor(vex.Ports.PORT5, vex.GearSetting.RATIO36_1, True)  # Left arm motor
-armR = vex.Motor(vex.Ports.PORT6, vex.GearSetting.RATIO36_1, True)  # Right arm motor
+mRF = vex.Motor(vex.Ports.PORT10, vex.GearSetting.RATIO18_1, True)  # Right front motor
+mLB = vex.Motor(vex.Ports.PORT12, vex.GearSetting.RATIO18_1, True)  # Left back motor
+mRB = vex.Motor(vex.Ports.PORT19, vex.GearSetting.RATIO18_1, True)  # Right back motor
+armL = vex.Motor(vex.Ports.PORT11, vex.GearSetting.RATIO36_1, True)  # Left arm motor
+armR = vex.Motor(vex.Ports.PORT20, vex.GearSetting.RATIO36_1, True)  # Right arm motor
 intake = vex.Motor(vex.Ports.PORT8, vex.GearSetting.RATIO18_1, True)  # Intake motor
 controller1 = vex.Controller(vex.Ports.PORT9, vex.ControllerType.PRIMARY, True)  # Primary controller
 inertia_center = vex.Inertial(vex.Ports.PORT21)  # Inertial sensor
