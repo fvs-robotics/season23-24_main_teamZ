@@ -25,6 +25,8 @@ competition = vex.Competition()
 
 
 def pre_auton():
+    if(!(competition.autonomous || competition.drivercontrol)):
+        # This code runs once when the robot is first started up
     pass
 
 
