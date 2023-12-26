@@ -79,17 +79,22 @@ def drivercontrol():
                                     velocityUnits = VelocityUnits.PCT
                                     )
         """
-
         if controller1.ButtonR1.pressing():
-            armL.spin_for_time(FWD, 300, MSEC, 100, PCT)
+            armL.spin_for_time(REV, 300, MSEC, 100, PCT)
             armR.spin_for_time(FWD, 300, MSEC, 100, PCT)
         if controller1.ButtonR2.pressing():
-            armL.spin_for_time(REV, 300, MSEC, 100, PCT)
+            armL.spin_for_time(FWD, 300, MSEC, 100, PCT)
             armR.spin_for_time(REV, 300, MSEC, 100, PCT)
         else:
             armL.stop(hold)
             armR.stop(hold)
 
+        # Check documentation to use the right method spin
+        if controller1.ButtonUp.pressing():
+            armL.spin(REV, 100, PCT, 100, PCT)
+            armR.spin(FWD, 100, PCT, 100, PCT)
+
+        """
         # Sleep the task for a short amount of time to
         # prevent wasted resources.
         time.sleep(20 / 1000)
