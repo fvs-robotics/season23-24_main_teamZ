@@ -16,6 +16,7 @@ armR = vex.Motor(vex.Ports.PORT20, vex.GearSetting.RATIO36_1, True)  # Right arm
 intake = vex.Motor(vex.Ports.PORT8, vex.GearSetting.RATIO18_1, True)  # Intake motor
 controller1 = vex.Controller(vex.Ports.PORT9, vex.ControllerType.PRIMARY, True)  # Primary controller
 inertia_center = vex.Inertial(vex.Ports.PORT21)  # Inertial sensor
+launcher = vex.Motor(vex.Ports.PORT6, vex.GearSetting.RATIO36_1, True)  # Launcher motor unsured port
 # endregion config
 
 
@@ -31,9 +32,74 @@ def pre_auton():
 
 
 def autonomous():
-    # Place autonomous code here
+    """
+    Set the velocity of four motors to 100 percent.
+    """
+    mLF.set_velocity(100, PERCENT)
+    mRF.set_velocity(100, PERCENT)
+    mLB.set_velocity(100, PERCENT)
+    mRB.set_velocity(100, PERCENT)
 
-    pass
+    """
+    Set the maximum torque of four motors to 100 percent.
+    The intake wheels always spin.
+    """
+    mLF.set_max_torque(100, PERCENT)
+    mRF.set_max_torque(100, PERCENT)
+    mLB.set_max_torque(100, PERCENT)
+    mRB.set_max_torque(100, PERCENT)
+    intake.spin(FORWARD)
+
+    # When the robot starts in the left corner.
+    while True:
+
+        # Robot lifts the intake arm first. 
+        # Left motor in positive direction,
+        # Right motor in negative direction.
+        armL.spin_for_time(FORWARD, 300, MSEC, 100, PCT)
+        armR.spin_for_time(REVERSE, 300, MSEC, 100, PCT)
+
+        # Robot turns right.
+        mLF.spin_for(FORWARD, 90, DEGREES)
+        mLB.spin_for(FORWARD, 90, DEGREES)
+        
+        # Robot lifts the intake arm higher to push the ball into the net.
+        armL.spin_for_time(FORWARD, 300, MSEC, 100, PCT)
+        armR.spin_for_time(REVERSE, 300, MSEC, 100, PCT)
+
+        # Robot moves backward.
+        mLF.spin_for(REVERSE, 90, DEGREES)
+        mLB.spin_for(REVERSE, 90, DEGREES)
+        mRF.spin_for(REVERSE, 90, DEGREES)
+        mRB.spin_for(REVERSE, 90, DEGREES)
+
+        # Robot goes to take the first first green ball,
+        # It gets the one in the up-left first,
+        # then the one in the down-left,
+        # then the one in the up-right.
+
+        # The intake arm goes down.
+        armL.spin_for_time(REVERSE, 300, MSEC, 100, PCT)
+        
+        # Robot turns left.
+        mLF.spin_for(REVERSE, 90, DEGREES)
+        mLB.spin_for(REVERSE, 90, DEGREES)
+        mRF.spin_for(REVERSE, 90, DEGREES)
+        mRB.spin_for(REVERSE, 90, DEGREES)
+    
+        # The intake arm lifts. 
+        
+    # 备注
+        
+    mLF.stop()
+
+    # When the robot starts in the right corner.
+    while True:
+        mLF.spin_for(FORWARD, 90, DEGREES)
+        mLF.spin_for(FORWARD, 90, DEGREES)
+        mLF.spin_for(FORWARD, 90, DEGREES)
+        mLF.spin_for(FORWARD, 90, DEGREES)
+        wait(5, MSEC)
 
 
 def drivercontrol():
@@ -97,6 +163,7 @@ def drivercontrol():
         """
         # Sleep the task for a short amount of time to
         # prevent wasted resources.
+        """
         time.sleep(20 / 1000)
         pass
 
