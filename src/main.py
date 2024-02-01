@@ -1,192 +1,163 @@
+"""
+This main program defines autonomous and driver control functions to handle
+motor movements, arm control, intake control, and launcher control.
+
+During autonomous mode, the robot will perform predefined actions.
+During driver control mode, use the controller to manually control the robot.
+
+Ensure all hardware components are properly connected and configured before running the program.
+
+Date: 2023-2024. January 2024.
+"""
+
 import sys
 import vex
 from vex import *
-import motor_group
-import drivetrain
-import smartdrive
+import urandom
+
+brain = Brain()
 
 # region config
-brain = vex.Brain()
-mLF = vex.Motor(vex.Ports.PORT1, vex.GearSetting.RATIO18_1, True)  # Left front motor
-mRF = vex.Motor(vex.Ports.PORT10, vex.GearSetting.RATIO18_1, True)  # Right front motor
-mLB = vex.Motor(vex.Ports.PORT12, vex.GearSetting.RATIO18_1, True)  # Left back motor
-mRB = vex.Motor(vex.Ports.PORT19, vex.GearSetting.RATIO18_1, True)  # Right back motor
-armL = vex.Motor(vex.Ports.PORT11, vex.GearSetting.RATIO36_1, True)  # Left arm motor
-armR = vex.Motor(vex.Ports.PORT20, vex.GearSetting.RATIO36_1, True)  # Right arm motor
-intake = vex.Motor(vex.Ports.PORT8, vex.GearSetting.RATIO18_1, True)  # Intake motor
-controller1 = vex.Controller(vex.Ports.PORT9, vex.ControllerType.PRIMARY, True)  # Primary controller
-inertia_center = vex.Inertial(vex.Ports.PORT21)  # Inertial sensor
-launcher = vex.Motor(vex.Ports.PORT6, vex.GearSetting.RATIO36_1, True)  # Launcher motor unsured port
-# endregion config
+controller = Controller(PRIMARY)  # Primary controller
+motor_left_front = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)  # Left front motor
+motor_right_front = Motor(Ports.PORT10, GearSetting.RATIO_18_1, False)  # Right front motor
+motor_left_back = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)  # Left back motor
+motor_right_back = Motor(Ports.PORT19, GearSetting.RATIO_18_1, False)  # Right back motor
+arm_left = Motor(Ports.PORT11, GearSetting.RATIO_36_1, False)  # Left arm motor
+arm_right = Motor(Ports.PORT20, GearSetting.RATIO_36_1, False)  # Right arm motor
+intake = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)  # Intake motor
+launcher = Motor(Ports.PORT6, GearSetting.RATIO_36_1, False)  # Launcher motor
 
 
-# Creates a competition object that allows access to Competition methods.
-# This creates a global instance.
-competition = vex.Competition()
+# end of region config
 
-
-def pre_auton():
-    if(!(competition.autonomous || competition.drivercontrol)):
-        # This code runs once when the robot is first started up
-    pass
+def initialize_autonomous():
+    # start the autonomous control tasks
+    _autonomous_thread = Thread(autonomous)
+    # wait for the driver control period to end
+    while (competition.is_autonomous() and competition.is_enabled()):
+        # wait 10 milliseconds before checking again
+        wait(10, MSEC)
+    # stop the autonomous control tasks
+    _autonomous_thread.stop()
 
 
 def autonomous():
-    """
-    Set the velocity of four motors to 100 percent.
-    """
-    mLF.set_velocity(100, PERCENT)
-    mRF.set_velocity(100, PERCENT)
-    mLB.set_velocity(100, PERCENT)
-    mRB.set_velocity(100, PERCENT)
+    # Set the velocity of four motors to full PERCENT.
+    full = 100
+    motor_left_front.set_velocity(full, PERCENT)
+    motor_right_front.set_velocity(full, PERCENT)
+    motor_left_back.set_velocity(full, PERCENT)
+    motor_right_back.set_velocity(full, PERCENT)
 
-    """
-    Set the maximum torque of four motors to 100 percent.
-    The intake wheels always spin.
-    """
-    mLF.set_max_torque(100, PERCENT)
-    mRF.set_max_torque(100, PERCENT)
-    mLB.set_max_torque(100, PERCENT)
-    mRB.set_max_torque(100, PERCENT)
-    intake.spin(FORWARD)
+    # Set the maximum torque of four motors to full PERCENT.
+    # The intake wheels always spin.
+    motor_left_front.set_max_torque(full, PERCENT)
+    motor_right_front.set_max_torque(full, PERCENT)
+    motor_left_back.set_max_torque(full, PERCENT)
+    motor_right_back.set_max_torque(full, PERCENT)
+    intake.spin(FORWARD, full, PERCENT)
 
-    # When the robot starts in the left corner.
+    # left motor in REVERSE direction
+    # right motor in FORWARD direction
+
+    # when the robot starts in the left corner
     while True:
+        # release the intake to the horizon
+        arm_left.spin(FORWARD)
+        arm_right.spin(REVERSE)
+        wait(1, SECONDS)
+        arm_left.stop(HOLD)
+        arm_right.stop(HOLD)
 
-        # Robot lifts the intake arm first. 
-        # Left motor in positive direction,
-        # Right motor in negative direction.
-        armL.spin_for_time(FORWARD, 300, MSEC, 100, PCT)
-        armR.spin_for_time(REVERSE, 300, MSEC, 100, PCT)
+        # lift the intake arm first
+        arm_left.spin_for(REVERSE, 30, DEGREES)
+        arm_right.spin_for(FORWARD, 30, DEGREES)
 
-        # Robot turns right.
-        mLF.spin_for(FORWARD, 90, DEGREES)
-        mLB.spin_for(FORWARD, 90, DEGREES)
-        
-        # Robot lifts the intake arm higher to push the ball into the net.
-        armL.spin_for_time(FORWARD, 300, MSEC, 100, PCT)
-        armR.spin_for_time(REVERSE, 300, MSEC, 100, PCT)
+        # turn right
+        motor_left_front.spin(REVERSE)
+        motor_left_back.spin(REVERSE)
+        motor_right_front.spin(FORWARD)
+        motor_right_back.spin(FORWARD)
+        wait(1, SECONDS)
+        motor_left_front.stop()
+        motor_left_back.stop()
+        motor_right_front.stop()
+        motor_right_back.stop()
 
-        # Robot moves backward.
-        mLF.spin_for(REVERSE, 90, DEGREES)
-        mLB.spin_for(REVERSE, 90, DEGREES)
-        mRF.spin_for(REVERSE, 90, DEGREES)
-        mRB.spin_for(REVERSE, 90, DEGREES)
-
-        # Robot goes to take the first first green ball,
-        # It gets the one in the up-left first,
-        # then the one in the down-left,
-        # then the one in the up-right.
-
-        # The intake arm goes down.
-        armL.spin_for_time(REVERSE, 300, MSEC, 100, PCT)
-        
-        # Robot turns left.
-        mLF.spin_for(REVERSE, 90, DEGREES)
-        mLB.spin_for(REVERSE, 90, DEGREES)
-        mRF.spin_for(REVERSE, 90, DEGREES)
-        mRB.spin_for(REVERSE, 90, DEGREES)
-    
-        # The intake arm lifts. 
-        
-    # 备注
-        
-    mLF.stop()
-
-    # When the robot starts in the right corner.
-    while True:
-        mLF.spin_for(FORWARD, 90, DEGREES)
-        mLF.spin_for(FORWARD, 90, DEGREES)
-        mLF.spin_for(FORWARD, 90, DEGREES)
-        mLF.spin_for(FORWARD, 90, DEGREES)
-        wait(5, MSEC)
+    # 插片程序
 
 
-def drivercontrol():
-    # Place drive control code here, inside the loop
+def initialize_driver_control():
+    # start the driver control tasks
+    _driver_thread = Thread(driver_control)
+
+    # wait for the driver control period to end
+    while (competition.is_driver_control() and competition.is_enabled()):
+        # wait 10 milliseconds before checking again
+        wait(10, MSEC)
+
+    # stop the driver control tasks
+    _driver_thread.stop()
+
+
+def driver_control():
+    full = 100
+    intake.spin(FORWARD, full, PERCENT)
+    # place drive control code here, inside the loop
     while True:
         # This is the main loop for the driver control.
         # Each time through the loop you should update motor
         # movements based on input from the controller.
 
-        intake.spin(reverse, 100, percent)
-
-        """
-        Temperature return:
-        Every movement will return the temperature of the motor on the brain screen.
-        """
-        tempArmL = armL.temperature(CELCIUS)
-        tempArmR = armR.temperature(CELCIUS)
+        # Temperature return:
+        # Every movement will return the temperature of the motor on the brain screen.
+        tempArmL = arm_left.temperature()
+        tempArmR = arm_right.temperature()
         brain.screen.clear_screen()
-        brain.screen.print_(tempArmL, TRUE)
-        brain.screen.print_(tempArmR, TRUE)
+        brain.screen.print(tempArmL)
+        brain.screen.print(tempArmR)
 
-        """
-        Controller Axis 1 and Axis 3:
-        The left front motor and left back motor spin forward when pushing the left joystick forward.
-        Then, the left front motor and left back motor spin backward when pushing the left joystick backward.
-        """
-        mLF.spin(FWD, controller1.axis3.value() + controller1.axis1.value(), PCT)
-        mLB.spin(FWD, controller1.axis3.value() + controller1.axis1.value(), PCT)
-        mRF.spin(FWD, controller1.axis3.value() - controller1.axis1.value(), PCT)
-        mRB.spin(FWD, controller1.axis3.value() - controller1.axis1.value(), PCT)
+        # Controller Axis 1 and Axis 3:
+        # The left front motor and left back motor spin forward when pushing the left joystick forward.
+        # Then, the left front motor and left back motor spin backward when pushing the left joystick backward.
+        motor_left_front.spin(REVERSE, controller.axis1.value() + controller.axis3.value(), PERCENT)
+        motor_left_back.spin(REVERSE, controller.axis1.value() + controller.axis3.value(), PERCENT)
+        motor_right_front.spin(REVERSE, controller.axis1.value() - controller.axis3.value(), PERCENT)
+        motor_right_back.spin(REVERSE, controller.axis1.value() - controller.axis3.value(), PERCENT)
 
-        """
-        R1 and R2 buttons:
-        The right arm motor and left arm motor lift up the arms at once when pressing the R1 button.
-        Then, the right arm motor and left arm motor lift down the arms at once when pressing the R2 button.
-        
-        For reference, in vex.Motor class:
-        def vex.Motor.spin_for_time	(self,
-                                    direction,
-                                    time,
-                                    timeUnits = TimeUnits.SEC,
-                                    velocity = None,
-                                    velocityUnits = VelocityUnits.PCT
-                                    )
-        """
-        if controller1.ButtonR1.pressing():
-            armL.spin_for_time(REV, 300, MSEC, 100, PCT)
-            armR.spin_for_time(FWD, 300, MSEC, 100, PCT)
-        if controller1.ButtonR2.pressing():
-            armL.spin_for_time(FWD, 300, MSEC, 100, PCT)
-            armR.spin_for_time(REV, 300, MSEC, 100, PCT)
+        # R1 and R2 buttons:
+        # The right arm motor and left arm motor lift up the arms at once when pressing the R1 button.
+        # Then, the right arm motor and left arm motor lift down the arms at once when pressing the R2 button.
+        if controller.buttonL1.pressing():
+            arm_left.spin_for(REVERSE, full, PERCENT)
+            arm_right.spin_for(FORWARD, full, PERCENT)
+            wait(0.5, SECONDS)
+
+        elif controller.buttonL2.pressing():
+            arm_left.spin_for(FORWARD, full, PERCENT)
+            arm_right.spin_for(REVERSE, full, PERCENT)
+            wait(0.5, SECONDS)
+
+        elif controller.buttonR1.pressing():
+            intake.spin(REVERSE, full, PERCENT)
+
+        elif controller.buttonR2.pressing():
+            intake.spin(FORWARD, full, PERCENT)
+
+        if controller.buttonUp.pressing():
+            launcher.spin(FORWARD, full, PERCENT)
+
+        if controller.buttonDown.pressing():
+            launcher.set_position(0, DEGREES)
+            launcher.stop(HOLD)
+
         else:
-            armL.stop(hold)
-            armR.stop(hold)
-
-        # Check documentation to use the right method spin
-        if controller1.ButtonUp.pressing():
-            armL.spin(REV, 100, PCT, 100, PCT)
-            armR.spin(FWD, 100, PCT, 100, PCT)
-
-        """
-        # Sleep the task for a short amount of time to
-        # prevent wasted resources.
-        """
-        time.sleep(20 / 1000)
-        pass
+            # Stop the arms only if neither ButtonL2 nor ButtonL1 is pressed
+            arm_left.stop(HOLD)
+            arm_right.stop(HOLD)
+            wait(20, MSEC)
 
 
-# Do not adjust the lines below
-
-# Set up (but don't start) callbacks for autonomous and driver control periods.
-competition.autonomous(autonomous)
-competition.drivercontrol(drivercontrol)
-
-# Run the pre-autonomous function.
-pre_auton()
-
-# Initial actions.
-# This is a placeholder code.
-armL.spin(FWD, 20, PCT)
-armR.spin(FWD, 20, PCT)
-time.sleep(20 / 1000)
-# End of placeholder code.
-
-# Prevent main from exiting with an infinite loop.
-while True:
-    time.sleep(1)  # Placeholder code. Replace with the control code.
-
-# Robot Mesh Studio runtime continues to run until all threads and
-# competition callbacks are finished.
+# allows access to Competition methods
+competition = Competition(driver_control, autonomous)
