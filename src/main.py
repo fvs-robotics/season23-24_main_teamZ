@@ -1,13 +1,7 @@
 """
-This main program defines autonomous and driver control functions to handle
-motor movements, arm control, intake control, and launcher control.
-
-During autonomous mode, the robot will perform predefined actions.
-During driver control mode, use the controller to manually control the robot.
-
 Ensure all hardware components are properly connected and configured before running the program.
 
-Date: 2023-2024. January 2024.
+February 2024.
 """
 
 import sys
@@ -25,8 +19,9 @@ motor_left_back = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)  # Left bac
 motor_right_back = Motor(Ports.PORT19, GearSetting.RATIO_18_1, False)  # Right back motor
 arm_left = Motor(Ports.PORT11, GearSetting.RATIO_36_1, False)  # Left arm motor
 arm_right = Motor(Ports.PORT20, GearSetting.RATIO_36_1, False)  # Right arm motor
-intake = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)  # Intake motor
-launcher = Motor(Ports.PORT6, GearSetting.RATIO_36_1, False)  # Launcher motor
+intake = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)  # intake motor
+launcher = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)  # Launcher motor
+jumpA = DigitalIn(brain.three_wire_port.a)
 
 
 # end of region config
@@ -43,50 +38,164 @@ def initialize_autonomous():
 
 
 def autonomous():
-    # Set the velocity of four motors to full PERCENT.
-    full = 100
-    motor_left_front.set_velocity(full, PERCENT)
-    motor_right_front.set_velocity(full, PERCENT)
-    motor_left_back.set_velocity(full, PERCENT)
-    motor_right_back.set_velocity(full, PERCENT)
+    # Segment 1
 
-    # Set the maximum torque of four motors to full PERCENT.
-    # The intake wheels always spin.
-    motor_left_front.set_max_torque(full, PERCENT)
-    motor_right_front.set_max_torque(full, PERCENT)
-    motor_left_back.set_max_torque(full, PERCENT)
-    motor_right_back.set_max_torque(full, PERCENT)
-    intake.spin(FORWARD, full, PERCENT)
+    arm_left.spin(FORWARD, 100, PERCENT)
+    arm_right.spin(REVERSE, 100, PERCENT)
+    wait(0.3, SECONDS)
 
-    # left motor in REVERSE direction
-    # right motor in FORWARD direction
+    arm_left.spin(REVERSE, 100, PERCENT)
+    arm_right.spin(FORWARD, 100, PERCENT)
+    wait(0.3, SECONDS)
 
-    # when the robot starts in the left corner
-    while True:
-        # release the intake to the horizon
-        arm_left.spin(FORWARD)
-        arm_right.spin(REVERSE)
-        wait(1, SECONDS)
-        arm_left.stop(HOLD)
-        arm_right.stop(HOLD)
+    intake.spin(FORWARD, 100, PERCENT)
+    wait(0.2, SECONDS)
 
-        # lift the intake arm first
-        arm_left.spin_for(REVERSE, 30, DEGREES)
-        arm_right.spin_for(FORWARD, 30, DEGREES)
+    motor_left_front.spin(REVERSE, 100, PERCENT)
+    motor_left_back.spin(REVERSE, 100, PERCENT)
+    motor_right_front.spin(FORWARD, 100, PERCENT)
+    motor_right_back.spin(FORWARD, 100, PERCENT)
+    wait(0.3,SECONDS)
 
-        # turn right
-        motor_left_front.spin(REVERSE)
-        motor_left_back.spin(REVERSE)
-        motor_right_front.spin(FORWARD)
-        motor_right_back.spin(FORWARD)
-        wait(1, SECONDS)
-        motor_left_front.stop()
-        motor_left_back.stop()
-        motor_right_front.stop()
-        motor_right_back.stop()
+    motor_left_front.stop(HOLD)
+    motor_right_front.stop(HOLD)
+    motor_left_back.stop(HOLD)
+    motor_right_back.stop(HOLD)
+    wait(0.05, SECONDS)
 
-    # 插片程序
+    # Segment 2
 
+    motor_left_front.spin(REVERSE, 80, PERCENT)
+    motor_left_back.spin(REVERSE, 80, PERCENT)
+    motor_right_front.spin(REVERSE, 80, PERCENT)
+    motor_right_back.spin(REVERSE, 80, PERCENT)
+    wait(0.2, SECONDS)
+
+    motor_left_front.spin(REVERSE, 100, PERCENT)
+    motor_left_back.spin(REVERSE, 100, PERCENT)
+    motor_right_front.spin(FORWARD, 100, PERCENT)
+    motor_right_back.spin(FORWARD, 100, PERCENT)
+    wait(0.5, SECONDS)
+
+    motor_left_front.spin(FORWARD, 100, PERCENT)
+    motor_left_back.spin(FORWARD, 100, PERCENT)
+    motor_right_front.spin(FORWARD, 100, PERCENT)
+    motor_right_back.spin(FORWARD, 100, PERCENT)
+    wait(0.3, SECONDS)
+
+    motor_left_front.stop(HOLD)
+    motor_right_front.stop(HOLD)
+    motor_left_back.stop(HOLD)
+    motor_right_back.stop(HOLD)
+    wait(0.01,SECONDS)
+
+    arm_left.spin(FORWARD, 100, PERCENT)
+    arm_right.spin(REVERSE, 100, PERCENT)
+    wait(0.3, SECONDS)
+
+    motor_left_front.spin(REVERSE, 100, PERCENT)
+    motor_left_back.spin(REVERSE, 100, PERCENT)
+    motor_right_front.spin(FORWARD, 100, PERCENT)
+    motor_right_back.spin(FORWARD, 100, PERCENT)
+    wait(0.5, SECONDS)
+
+    motor_left_front.stop(HOLD)
+    motor_right_front.stop(HOLD)
+    motor_left_back.stop(HOLD)
+    motor_right_back.stop(HOLD)
+    wait(0.01,SECONDS)
+
+
+    # Segment 3
+
+    motor_left_front.spin(REVERSE, 100, PERCENT)
+    motor_left_back.spin(REVERSE, 100, PERCENT)
+    motor_right_front.spin(FORWARD, 100, PERCENT)
+    motor_right_back.spin(FORWARD, 100, PERCENT)
+    wait(0.5,SECONDS)
+
+    motor_left_front.spin(FORWARD, 70, PERCENT)
+    motor_left_back.spin(FORWARD, 70, PERCENT)
+    motor_right_front.spin(REVERSE, 70, PERCENT)
+    motor_right_back.spin(REVERSE, 70, PERCENT)
+    wait(0.2,SECONDS)
+
+    arm_left.spin(REVERSE, 100, PERCENT)
+    arm_right.spin(FORWARD, 100, PERCENT)
+    wait(0.6,SECONDS)
+
+    motor_left_front.stop(BRAKE)
+    motor_right_front.stop(BRAKE)
+    motor_left_back.stop(BRAKE)
+    motor_right_back.stop(BRAKE)
+    wait(0.1, SECONDS)
+
+
+    # Segment 4
+
+    motor_left_front.spin(FORWARD, 80, PERCENT)
+    motor_left_back.spin(FORWARD, 80, PERCENT)
+    motor_right_front.spin(FORWARD, 80, PERCENT)
+    motor_right_back.spin(FORWARD, 80, PERCENT)
+    wait(0.35,SECONDS)
+
+    motor_left_front.spin(REVERSE, 100, PERCENT)
+    motor_left_back.spin(REVERSE, 100, PERCENT)
+    motor_right_front.spin(FORWARD, 100, PERCENT)
+    motor_right_back.spin(FORWARD, 100, PERCENT)
+    wait(0.1,SECONDS)
+
+    intake.spin(FORWARD, 100, PERCENT)
+    wait(0.3,SECONDS)
+
+    motor_left_front.spin(REVERSE, 80, PERCENT)
+    motor_left_back.spin(REVERSE, 80, PERCENT)
+    motor_right_front.spin(REVERSE, 80, PERCENT)
+    motor_right_back.spin(REVERSE, 80, PERCENT)
+    wait(0.1,SECONDS)
+
+    motor_left_front.spin(REVERSE, 100, PERCENT)
+    motor_left_back.spin(REVERSE, 100, PERCENT)
+    motor_right_front.spin(FORWARD, 100, PERCENT)
+    motor_right_back.spin(FORWARD, 100, PERCENT)
+    wait(0.9,SECONDS)
+
+    motor_left_front.stop(HOLD)
+    motor_right_front.stop(HOLD)
+    motor_left_back.stop(HOLD)
+    motor_right_back.stop(HOLD)
+    wait(0.01,SECONDS)
+
+
+    # Segment 5
+
+    motor_left_front.spin(REVERSE, 100, PERCENT)
+    motor_left_back.spin(REVERSE, 100, PERCENT)
+    motor_right_front.spin(REVERSE, 100, PERCENT)
+    motor_right_back.spin(REVERSE, 100, PERCENT)
+    wait(0.47, SECONDS)
+
+    motor_left_front.spin(REVERSE, 90, PERCENT)
+    motor_left_back.spin(REVERSE, 90, PERCENT)
+    motor_right_front.spin(FORWARD, 90, PERCENT)
+    motor_right_back.spin(FORWARD, 90, PERCENT)
+    wait(0.1,SECONDS)
+
+    arm_left.spin(FORWARD, 85, PERCENT)
+    arm_right.spin(REVERSE, 85, PERCENT)
+    wait(0.4, SECONDS)
+
+    motor_left_front.spin(REVERSE, 100, PERCENT)
+    motor_left_back.spin(REVERSE, 100, PERCENT)
+    motor_right_front.spin(FORWARD, 100, PERCENT)
+    motor_right_back.spin(FORWARD, 100, PERCENT)
+    wait(0.8,SECONDS)
+
+    motor_left_front.stop(BRAKE)
+    motor_right_front.stop(BRAKE)
+    motor_left_back.stop(BRAKE)
+    motor_right_back.stop(BRAKE)
+    wait(0.01, SECONDS)
 
 def initialize_driver_control():
     # start the driver control tasks
@@ -110,16 +219,16 @@ def driver_control():
         # Each time through the loop you should update motor
         # movements based on input from the controller.
 
-        # Temperature return:
+        # (for debugging only) Temperature return:
         # Every movement will return the temperature of the motor on the brain screen.
-        tempArmL = arm_left.temperature()
-        tempArmR = arm_right.temperature()
-        brain.screen.clear_screen()
-        brain.screen.print(tempArmL)
-        brain.screen.print(tempArmR)
+        # tempArmL = arm_left.temperature()
+        # tempArmR = arm_right.temperature()
+        # brain.screen.clear_screen()
+        # brain.screen.print(tempArmL)
+        # brain.screen.print(tempArmR)
 
         # Controller Axis 1 and Axis 3:
-        # The left front motor and left back motor spin forward when pushing the left joystick forward.
+        # The left front motor and left back motor spin FORWARD when pushing the left joystick FORWARD.
         # Then, the left front motor and left back motor spin backward when pushing the left joystick backward.
         motor_left_front.spin(REVERSE, controller.axis1.value() + controller.axis3.value(), PERCENT)
         motor_left_back.spin(REVERSE, controller.axis1.value() + controller.axis3.value(), PERCENT)
@@ -129,15 +238,20 @@ def driver_control():
         # R1 and R2 buttons:
         # The right arm motor and left arm motor lift up the arms at once when pressing the R1 button.
         # Then, the right arm motor and left arm motor lift down the arms at once when pressing the R2 button.
+        if controller.buttonLeft.pressing():
+            launcher.spin(FORWARD, full, PERCENT)
+            wait(0.9, SECONDS)
+            launcher.stop(HOLD)
+            
         if controller.buttonL1.pressing():
             arm_left.spin_for(REVERSE, full, PERCENT)
             arm_right.spin_for(FORWARD, full, PERCENT)
-            wait(0.5, SECONDS)
+            wait(0.3, SECONDS)
 
         elif controller.buttonL2.pressing():
             arm_left.spin_for(FORWARD, full, PERCENT)
             arm_right.spin_for(REVERSE, full, PERCENT)
-            wait(0.5, SECONDS)
+            wait(0.3, SECONDS)
 
         elif controller.buttonR1.pressing():
             intake.spin(REVERSE, full, PERCENT)
@@ -156,8 +270,7 @@ def driver_control():
             # Stop the arms only if neither ButtonL2 nor ButtonL1 is pressed
             arm_left.stop(HOLD)
             arm_right.stop(HOLD)
+
             wait(20, MSEC)
-
-
 # allows access to Competition methods
 competition = Competition(driver_control, autonomous)
