@@ -1,14 +1,10 @@
 # 114514 Vex V5 Robotics Program
 
-This is the repository for our crappy Vex V5 robotics program.
-
-## About
-
-This repository contains the Python codebase for our Vex V5 robot.
+The Vex V5 program from team 63344Z.
 
 ## Features
 
-- **Autonomous:** Partially DONE
+- **Autonomous:** DONE
 - **Driver Control:** DONE
 
 ## Getting Started
