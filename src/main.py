@@ -1,5 +1,6 @@
 """
 Ensure all hardware components are properly connected and configured before running the program.
+This program is for the competition match.
 
 February 2024.
 """
@@ -25,6 +26,8 @@ jumpA = DigitalIn(brain.three_wire_port.a)
 
 
 # end of region config
+
+FULL_SPEED = 100
 
 def initialize_autonomous():
     # start the autonomous control tasks
@@ -211,8 +214,7 @@ def initialize_driver_control():
 
 
 def driver_control():
-    full = 100
-    intake.spin(FORWARD, full, PERCENT)
+    intake.spin(FORWARD, FULL_SPEED, PERCENT)
     # place drive control code here, inside the loop
     while True:
         # This is the main loop for the driver control.
@@ -239,28 +241,28 @@ def driver_control():
         # The right arm motor and left arm motor lift up the arms at once when pressing the R1 button.
         # Then, the right arm motor and left arm motor lift down the arms at once when pressing the R2 button.
         if controller.buttonLeft.pressing():
-            launcher.spin(FORWARD, full, PERCENT)
+            launcher.spin(FORWARD, FULL_SPEED, PERCENT)
             wait(0.9, SECONDS)
             launcher.stop(HOLD)
             
         if controller.buttonL1.pressing():
-            arm_left.spin_for(REVERSE, full, PERCENT)
-            arm_right.spin_for(FORWARD, full, PERCENT)
+            arm_left.spin_for(REVERSE, FULL_SPEED, PERCENT)
+            arm_right.spin_for(FORWARD, FULL_SPEED, PERCENT)
             wait(0.3, SECONDS)
 
         elif controller.buttonL2.pressing():
-            arm_left.spin_for(FORWARD, full, PERCENT)
-            arm_right.spin_for(REVERSE, full, PERCENT)
+            arm_left.spin_for(FORWARD, FULL_SPEED, PERCENT)
+            arm_right.spin_for(REVERSE, FULL_SPEED, PERCENT)
             wait(0.3, SECONDS)
 
         elif controller.buttonR1.pressing():
-            intake.spin(REVERSE, full, PERCENT)
+            intake.spin(REVERSE, FULL_SPEED, PERCENT)
 
         elif controller.buttonR2.pressing():
-            intake.spin(FORWARD, full, PERCENT)
+            intake.spin(FORWARD, FULL_SPEED, PERCENT)
 
         if controller.buttonUp.pressing():
-            launcher.spin(FORWARD, full, PERCENT)
+            launcher.spin(FORWARD, FULL_SPEED, PERCENT)
 
         if controller.buttonDown.pressing():
             launcher.set_position(0, DEGREES)
