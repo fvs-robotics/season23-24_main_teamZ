@@ -2,7 +2,8 @@
 Ensure all hardware components are properly connected and configured before running the program.
 This program is for the competition match.
 
-February 2024.
+Season 2023-2024.
+Final edit: February 21th, 2024.
 """
 
 import sys
@@ -78,13 +79,13 @@ def autonomous():
     motor_left_back.spin(REVERSE, 100, PERCENT)
     motor_right_front.spin(FORWARD, 100, PERCENT)
     motor_right_back.spin(FORWARD, 100, PERCENT)
-    wait(0.5, SECONDS)
+    wait(0.48, SECONDS)
 
     motor_left_front.spin(FORWARD, 100, PERCENT)
     motor_left_back.spin(FORWARD, 100, PERCENT)
     motor_right_front.spin(FORWARD, 100, PERCENT)
     motor_right_back.spin(FORWARD, 100, PERCENT)
-    wait(0.3, SECONDS)
+    wait(0.33, SECONDS)
 
     motor_left_front.stop(HOLD)
     motor_right_front.stop(HOLD)
@@ -100,7 +101,7 @@ def autonomous():
     motor_left_back.spin(REVERSE, 100, PERCENT)
     motor_right_front.spin(FORWARD, 100, PERCENT)
     motor_right_back.spin(FORWARD, 100, PERCENT)
-    wait(0.5, SECONDS)
+    wait(0.52, SECONDS)
 
     motor_left_front.stop(HOLD)
     motor_right_front.stop(HOLD)
@@ -115,13 +116,13 @@ def autonomous():
     motor_left_back.spin(REVERSE, 100, PERCENT)
     motor_right_front.spin(FORWARD, 100, PERCENT)
     motor_right_back.spin(FORWARD, 100, PERCENT)
-    wait(0.5,SECONDS)
+    wait(0.52,SECONDS)
 
     motor_left_front.spin(FORWARD, 70, PERCENT)
     motor_left_back.spin(FORWARD, 70, PERCENT)
     motor_right_front.spin(REVERSE, 70, PERCENT)
     motor_right_back.spin(REVERSE, 70, PERCENT)
-    wait(0.2,SECONDS)
+    wait(0.27,SECONDS)
 
     arm_left.spin(REVERSE, 100, PERCENT)
     arm_right.spin(FORWARD, 100, PERCENT)
@@ -140,7 +141,7 @@ def autonomous():
     motor_left_back.spin(FORWARD, 80, PERCENT)
     motor_right_front.spin(FORWARD, 80, PERCENT)
     motor_right_back.spin(FORWARD, 80, PERCENT)
-    wait(0.35,SECONDS)
+    wait(0.34,SECONDS)
 
     motor_left_front.spin(REVERSE, 100, PERCENT)
     motor_left_back.spin(REVERSE, 100, PERCENT)
@@ -151,11 +152,11 @@ def autonomous():
     intake.spin(FORWARD, 100, PERCENT)
     wait(0.3,SECONDS)
 
-    motor_left_front.spin(REVERSE, 80, PERCENT)
-    motor_left_back.spin(REVERSE, 80, PERCENT)
-    motor_right_front.spin(REVERSE, 80, PERCENT)
-    motor_right_back.spin(REVERSE, 80, PERCENT)
-    wait(0.1,SECONDS)
+    motor_left_front.spin(REVERSE, 70, PERCENT)
+    motor_left_back.spin(REVERSE, 70, PERCENT)
+    motor_right_front.spin(REVERSE, 70, PERCENT)
+    motor_right_back.spin(REVERSE, 70, PERCENT)
+    wait(0.07,SECONDS)
 
     motor_left_front.spin(REVERSE, 100, PERCENT)
     motor_left_back.spin(REVERSE, 100, PERCENT)
@@ -176,7 +177,7 @@ def autonomous():
     motor_left_back.spin(REVERSE, 100, PERCENT)
     motor_right_front.spin(REVERSE, 100, PERCENT)
     motor_right_back.spin(REVERSE, 100, PERCENT)
-    wait(0.47, SECONDS)
+    wait(0.488, SECONDS)
 
     motor_left_front.spin(REVERSE, 90, PERCENT)
     motor_left_back.spin(REVERSE, 90, PERCENT)
@@ -198,7 +199,36 @@ def autonomous():
     motor_right_front.stop(BRAKE)
     motor_left_back.stop(BRAKE)
     motor_right_back.stop(BRAKE)
-    wait(0.01, SECONDS)
+    wait(0.01,SECONDS)
+
+    # Segment 6 
+
+    motor_left_front.stop(HOLD)
+    motor_right_front.stop(HOLD)
+    motor_left_back.stop(HOLD)
+    motor_right_back.stop(HOLD)
+    arm_left.stop(HOLD)
+    arm_right.stop(HOLD)
+
+    motor_left_front.spin(FORWARD, 80, PERCENT)
+    motor_left_back.spin(FORWARD, 80, PERCENT)
+    motor_right_front.spin(FORWARD, 80, PERCENT)
+    motor_right_back.spin(FORWARD, 80, PERCENT)
+    wait(0.3, SECONDS)
+
+    arm_left.spin(REVERSE, 85, PERCENT)
+    arm_right.spin(FORWARD, 85, PERCENT)
+    wait(0.4, SECONDS)
+
+
+
+    motor_left_front.stop(HOLD)
+    motor_right_front.stop(HOLD)
+    motor_left_back.stop(HOLD)
+    motor_right_back.stop(HOLD)
+    arm_left.stop(HOLD)
+    arm_right.stop(HOLD)
+    wait(0.01,SECONDS)
 
 def initialize_driver_control():
     # start the driver control tasks
